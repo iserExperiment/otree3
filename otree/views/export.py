@@ -47,9 +47,9 @@ class ExportIndex(vanilla.TemplateView):
 
 
 def get_csv_http_response(prefix) -> HttpResponse:
-    response = HttpResponse(content_type='text/csv')
-    date = datetime.date.today().isoformat()
-    response['Content-Disposition'] = f'attachment; filename="{prefix}-{date}.csv"'
+    response = HttpResponse(content_type='text/tab-separated-values')
+    date = datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S")
+    response['Content-Disposition'] = f'attachment; filename="{prefix}_{date}.tsv"'
     return response
 
 
@@ -59,7 +59,7 @@ class ExportSessionWide(vanilla.View):
     url_pattern = r'^ExportSessionWide/(?P<session_code>[a-z0-9]+)/$'
 
     def get(self, request, session_code):
-        response = get_csv_http_response('all_apps_wide')
+        response = get_csv_http_response('SESSION')
         if bool(request.GET.get('excel')):
             # BOM
             response.write('\ufeff')

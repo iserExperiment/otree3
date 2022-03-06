@@ -767,7 +767,7 @@ class ExportData(_OTreeAsyncJsonWebsocketConsumer):
         app_name = content.get('app_name')
         is_custom = content.get('is_custom')
 
-        iso_date = datetime.date.today().isoformat()
+        iso_date = datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S")
         with io.StringIO() as fp:
             # Excel requires BOM; otherwise non-english characters are garbled
             if content.get('for_excel'):
@@ -781,12 +781,12 @@ class ExportData(_OTreeAsyncJsonWebsocketConsumer):
                 file_name_prefix = app_name
             else:
                 await database_sync_to_async(export_wide)(fp)
-                file_name_prefix = 'all_apps_wide'
+                file_name_prefix = 'ALL'
             data = fp.getvalue()
 
-        file_name = f'{file_name_prefix}_{iso_date}.csv'
+        file_name = f'{file_name_prefix}_{iso_date}.tsv'
 
-        content.update(file_name=file_name, data=data, mime_type='text/csv')
+        content.update(file_name=file_name, data=data, mime_type='text/tab-separated-values')
         # this doesn't go through channel layer, so it is probably safer
         # in terms of sending large data
         await self.send_json(content)

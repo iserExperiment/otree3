@@ -461,7 +461,7 @@ def custom_export_app(app_name, fp):
 
 
 def _export_csv(fp, rows):
-    writer = csv.writer(fp)
+    writer = csv.writer(fp, delimiter = '\t')
     writer.writerows(rows)
 
 
